@@ -56,3 +56,18 @@ fabric.properties
 Будет удалено .idea/
 Будет удалено WDT_a1.sln
 Будет удалено WDT_a1/
+Будет удалено .idea/.idea.a1/.idea/contentModel.xml
+Будет удалено .idea/.idea.a1/.idea/indexLayout.xml
+Будет удалено .idea/.idea.a1/.idea/modules.xml
+Будет удалено .idea/.idea.a1/.idea/vcs.xml
+Будет удалено .idea/.idea.a1/riderModule.iml
+Будет удалено ClassLibrary1/
+Будет удалено UnitTests/
+Будет удалено a1.sln
+Будет удалено a1/Program.cs
+Будет удалено a1/a1.csproj
+Будет удалено a1/bin/
+Будет удалено a1/model/
+Будет удалено a1/obj/
+
+\.idea/

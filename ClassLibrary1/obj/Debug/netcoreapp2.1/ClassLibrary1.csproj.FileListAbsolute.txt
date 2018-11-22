@@ -1,0 +1,14 @@
+/Users/dimz/Developer/Dotnet/WDT/a1/ClassLibrary1/bin/Debug/netcoreapp2.1/NUnit3.TestAdapter.dll
+/Users/dimz/Developer/Dotnet/WDT/a1/ClassLibrary1/bin/Debug/netcoreapp2.1/NUnit3.TestAdapter.pdb
+/Users/dimz/Developer/Dotnet/WDT/a1/ClassLibrary1/bin/Debug/netcoreapp2.1/nunit.engine.netstandard.dll
+/Users/dimz/Developer/Dotnet/WDT/a1/ClassLibrary1/bin/Debug/netcoreapp2.1/ClassLibrary1.deps.json
+/Users/dimz/Developer/Dotnet/WDT/a1/ClassLibrary1/bin/Debug/netcoreapp2.1/ClassLibrary1.runtimeconfig.json
+/Users/dimz/Developer/Dotnet/WDT/a1/ClassLibrary1/bin/Debug/netcoreapp2.1/ClassLibrary1.runtimeconfig.dev.json
+/Users/dimz/Developer/Dotnet/WDT/a1/ClassLibrary1/bin/Debug/netcoreapp2.1/ClassLibrary1.dll
+/Users/dimz/Developer/Dotnet/WDT/a1/ClassLibrary1/bin/Debug/netcoreapp2.1/ClassLibrary1.pdb
+/Users/dimz/Developer/Dotnet/WDT/a1/ClassLibrary1/obj/Debug/netcoreapp2.1/ClassLibrary1.csprojAssemblyReference.cache
+/Users/dimz/Developer/Dotnet/WDT/a1/ClassLibrary1/obj/Debug/netcoreapp2.1/ClassLibrary1.csproj.CoreCompileInputs.cache
+/Users/dimz/Developer/Dotnet/WDT/a1/ClassLibrary1/obj/Debug/netcoreapp2.1/ClassLibrary1.AssemblyInfoInputs.cache
+/Users/dimz/Developer/Dotnet/WDT/a1/ClassLibrary1/obj/Debug/netcoreapp2.1/ClassLibrary1.AssemblyInfo.cs
+/Users/dimz/Developer/Dotnet/WDT/a1/ClassLibrary1/obj/Debug/netcoreapp2.1/ClassLibrary1.dll
+/Users/dimz/Developer/Dotnet/WDT/a1/ClassLibrary1/obj/Debug/netcoreapp2.1/ClassLibrary1.pdb
