@@ -52,3 +52,5 @@ fabric.properties
 
 bin/
 
+#Apple System
+.DS_Store

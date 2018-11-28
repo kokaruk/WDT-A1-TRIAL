@@ -14,7 +14,11 @@
     ],
     "frameworks": {
       "netcoreapp2.1": {
-        "projectReferences": {}
+        "projectReferences": {
+          "/Users/dimz/Developer/Dotnet/WDT/a1/a1/a1.csproj": {
+            "projectPath": "/Users/dimz/Developer/Dotnet/WDT/a1/a1/a1.csproj"
+          }
+        }
       }
     },
     "warningProperties": {

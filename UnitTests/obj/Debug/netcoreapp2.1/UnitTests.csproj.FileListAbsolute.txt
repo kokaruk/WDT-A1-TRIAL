@@ -12,3 +12,6 @@
 /Users/dimz/Developer/Dotnet/WDT/a1/UnitTests/obj/Debug/netcoreapp2.1/UnitTests.AssemblyInfo.cs
 /Users/dimz/Developer/Dotnet/WDT/a1/UnitTests/obj/Debug/netcoreapp2.1/UnitTests.dll
 /Users/dimz/Developer/Dotnet/WDT/a1/UnitTests/obj/Debug/netcoreapp2.1/UnitTests.pdb
+/Users/dimz/Developer/Dotnet/WDT/a1/UnitTests/bin/Debug/netcoreapp2.1/a1.dll
+/Users/dimz/Developer/Dotnet/WDT/a1/UnitTests/bin/Debug/netcoreapp2.1/a1.pdb
+/Users/dimz/Developer/Dotnet/WDT/a1/UnitTests/obj/Debug/netcoreapp2.1/UnitTests.csproj.CopyComplete

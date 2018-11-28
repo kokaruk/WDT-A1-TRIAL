@@ -1,12 +1,13 @@
-﻿using wdt.model;
+﻿using wdt.controller;
 
 namespace wdt
 {
     public static class Program
     {
-        static void Main(string[] args)
+        private static void Main(string[] args)
         {
-            Controller login = new LoginController();
+            var runMode = args.Length > 0 && args[0] == "test";
+            Controller login = new LoginController(runMode);
             login.Start();  
         }
     }
