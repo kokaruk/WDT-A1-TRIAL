@@ -1,7 +1,9 @@
+using wdt.Model;
+
 namespace wdt.DAL
 {
-    public interface IUserDAL
+    public interface IUserDal
     {
-        
+        User GetUser(string username, string password);
     }
 }

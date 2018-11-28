@@ -1,4 +1,17 @@
-$HEADER$namespace $NAMESPACE$
+using System;
+using wdt.utils;
+
+namespace wdt.Model
 {
-  public class $CLASS$ {$END$}
+    public static class UserFactory
+    {
+        // factory method return user based on input
+        public static User MakeUserFromInt(int selection, string userName = "testName")
+        {
+            if (selection < 0 || selection >= Enum.GetNames(typeof(UserType)).Length)
+                throw new IndexOutOfRangeException("Unexpected user type");
+            var userType = (UserType) selection;
+            return new User(userName, userType);
+        }
+    }
 }

@@ -1,8 +1,8 @@
 using System;
 
-namespace wdt.model
+namespace wdt.controller
 {
-    internal class Controller
+    internal abstract class Controller
     {
         internal virtual void Start()
         {
