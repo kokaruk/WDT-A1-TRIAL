@@ -1,20 +1,19 @@
 using System;
-using wdt.Model;
 using wdt.utils;
 
 namespace wdt.Controller
 {
-    internal abstract class Controller
+    internal abstract class BaseController
     {
         // get primary controller based on logged on user
-        internal static Controller GetPrimaryController(User loggedOnUser)
+        internal static BaseController GetPrimaryController(LoginController loginController)
         {
             
-            var controllerTypeName = $"wdt.controller.{loggedOnUser.Type.ToString()}PrimaryController";
+            var controllerTypeName = $"wdt.Controller.{loginController.LoggedOnUser.Type.ToString()}PrimaryController";
             // use reflection to create instance 
             var controllerType = Type.GetType(controllerTypeName, true);
-            var instance = Activator.CreateInstance(controllerType);
-            return (Controller)instance;
+            var instance = Activator.CreateInstance(controllerType, loginController);
+            return (BaseController)instance;
         }
         
         // get user inout from menu and max value

@@ -1,7 +1,17 @@
-namespace wdt.controller
+namespace wdt.Controller
 {
-    public class OwnerResetInventoryItemController
+    internal class OwnerResetInventoryItemController : MenuControllerAdapter
     {
+        public OwnerResetInventoryItemController(BaseController parent) : base(parent)
+        {
+            MenuHeader = "Reset Inventory Item Stock";
+        }
+        
+        internal override void Start()
+        {
+            //todo implement
+            throw new System.NotImplementedException();
+        }
         
     }
 }

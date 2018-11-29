@@ -1,7 +1,17 @@
-namespace wdt.controller
+namespace wdt.Controller
 {
-    public class OwnerInventoryController
+    internal class OwnerInventoryController : MenuControllerAdapter
     {
+        public OwnerInventoryController(BaseController parent) : base(parent)
+        {
+            MenuHeader = "Owner Inventory";
+        }
+        
+        internal override void Start()
+        {
+            //todo implement
+            throw new System.NotImplementedException();
+        }
         
     }
 }

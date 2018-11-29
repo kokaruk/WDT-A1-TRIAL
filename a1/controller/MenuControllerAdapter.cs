@@ -1,7 +1,16 @@
-namespace wdt.controller
+using System.Collections.Generic;
+
+namespace wdt.Controller
 {
-    public class MenuControllerAdapter
+    internal abstract class MenuControllerAdapter: BaseController, IMenuController
     {
-        
+        public string MenuHeader { get; set; }
+        public BaseController Parent { get; }
+        public List<IMenuController> Children { get; set; } = new List<IMenuController>();
+
+        protected MenuControllerAdapter(BaseController parent)
+        {
+            Parent = parent;
+        }
     }
 }

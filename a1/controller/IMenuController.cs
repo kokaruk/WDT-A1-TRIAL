@@ -1,11 +1,11 @@
 using System.Collections.Generic;
  
- namespace wdt.controller
+ namespace wdt.Controller
  {
-     internal abstract class MenuController : Controller
+     internal interface IMenuController
      {
-         string MenuHeadaer { get; }
-         MenuController Parent { get; set; }
-         List<MenuController> Children { get; set; }
+         string MenuHeader { get; set;  }
+         BaseController Parent { get; }
+         List<IMenuController> Children { get; set; }
      }
  }

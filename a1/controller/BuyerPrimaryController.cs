@@ -1,4 +1,4 @@
-namespace wdt.controller
+namespace wdt.Controller
 {
     public class BuyerPrimaryController
     {
