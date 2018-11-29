@@ -5,35 +5,43 @@ using wdt.DAL;
 using wdt.Model;
 using wdt.utils;
 
-namespace wdt.controller
+namespace wdt.Controller
 {
-    internal class LoginController : Controller
+    internal class LoginController : BaseController
     {
+        // max allowed login attempts
         private static int _logAttempts = 3;
         internal User LoggedOnUser { get; private set; }
-        private readonly bool _testing;
+        private readonly bool _isTesting;
+        private Lazy<BaseController> _primaryController;
+        internal BaseController PrimaryBaseController => _primaryController.Value;
 
-        internal LoginController(bool testing)
+
+        //{ get; } = new Lazy<BaseController>( () => BaseController.GetPrimaryController(LoggedOnUser) )  ;
+        private BaseController _childBaseController;
+
+        // constructor
+        internal LoginController(bool isTesting)
         {
-            _testing = testing;
+            _isTesting = isTesting;
         }
 
         internal override void Start()
         {
-            // base class start clear the screen
-            base.Start();
-            LoggedOnUser = _testing ? GetFakeUerFromInput() : Login();
-            Console.WriteLine($"\nUsername: {LoggedOnUser.Name}, Type: {LoggedOnUser.Type} ");
+            // base class start clears the screen only
+            Console.Clear();
+            LoggedOnUser = _isTesting ? GetFakeUerFromInput() : Login();
+            _primaryController = new Lazy<BaseController>(GetPrimaryController(this));
+            PrimaryBaseController.Start();
         }
 
         private static User Login()
         {
-            if (_logAttempts <= 0)
+            if (--_logAttempts < 0)
             {
                 throw new TooManyLoginsException("Exhausted max login attempts");
             }
 
-            _logAttempts--;
             Console.Write("Username: ");
             var userName = Console.ReadLine();
             Console.Write("Password: ");
@@ -65,40 +73,24 @@ namespace wdt.controller
         // test mode, no login required
         private static User GetFakeUerFromInput()
         {
-            var userLogon = new StringBuilder(
-                "Select User Type\n================");
+            const string greetingHeader = "Select User Type";
+
+            var userLogon = new StringBuilder(greetingHeader);
+            userLogon.Append($"\n{greetingHeader.MenuPad()}");
             // menu options counter
-            var count = 0;
             Enum.GetNames(typeof(UserType))
                 .ToList()
-                .ForEach(
-                    type =>
-                    {
-                        count = (int) Enum.Parse(typeof(UserType), type) + 1;
-                        userLogon.Append($"\n{count}. {type}");
-                    }
-                );
-            userLogon.Append($"\n{++count}. Quit\n");
-
-            while (true)
-            {
-                var maxInput = Enum.GetNames(typeof(UserType)).Length + 1;
-
-                Console.WriteLine(userLogon);
-                Console.Write("Enter an option: ");
-                var input = Console.ReadLine();
-                if (!int.TryParse(input, out var option)
-                    || !option.IsWithinMaxValue(maxInput))
+                .ForEach(type =>
                 {
-                    Console.Clear();
-                    Console.Write("Invalid Input\n\n");
-                    continue;
-                }
+                    var count = (int) Enum.Parse(typeof(UserType), type) + 1;
+                    userLogon.Append($"\n{count}. {type}");
+                });
 
-                if (option == 4) Environment.Exit(0);
-
-                return UserFactory.MakeUserFromInt(--option);
-            }
+            var maxInput = Enum.GetNames(typeof(UserType)).Length + 1;
+            userLogon.Append($"\n{maxInput}. Quit\n");
+            var option = GetInput(userLogon.ToString(), maxInput);
+            if (option == 4) Environment.Exit(0);
+            return UserFactory.MakeUserFromInt(--option);
         }
     }
 }

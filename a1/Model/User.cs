@@ -1,5 +1,3 @@
-using wdt.utils;
-
 namespace wdt.Model
 {
     public class User
