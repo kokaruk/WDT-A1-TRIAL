@@ -16,7 +16,7 @@ namespace wdt.DAL
         {
             public User GetUser(string username, string password)
             {
-                return new User(username, UserType.Owner);
+                return new Owner(username);
             }
         }
         

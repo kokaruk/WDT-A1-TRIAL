@@ -7,11 +7,5 @@ namespace wdt.Controller
             MenuHeader = "Owner Inventory";
         }
         
-        internal override void Start()
-        {
-            //todo implement
-            throw new System.NotImplementedException();
-        }
-        
     }
 }

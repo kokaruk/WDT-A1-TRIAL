@@ -7,11 +7,5 @@ namespace wdt.Controller
             MenuHeader = "Reset Inventory Item Stock";
         }
         
-        internal override void Start()
-        {
-            //todo implement
-            throw new System.NotImplementedException();
-        }
-        
     }
 }

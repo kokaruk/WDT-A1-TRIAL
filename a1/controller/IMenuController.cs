@@ -1,11 +1,11 @@
-using System.Collections.Generic;
- 
- namespace wdt.Controller
+using System.Text;
+
+namespace wdt.Controller
  {
      internal interface IMenuController
      {
-         string MenuHeader { get; set;  }
+         string MenuHeader { get; set; }
          BaseController Parent { get; }
-         List<IMenuController> Children { get; set; }
+         int BuildMenu(out StringBuilder menu);
      }
  }

@@ -6,11 +6,5 @@ namespace wdt.Controller
         {
             MenuHeader = "All Stock Requests";
         }
-
-        internal override void Start()
-        {
-            //todo implement
-            throw new System.NotImplementedException();
-        }
     }
 }

@@ -13,12 +13,8 @@ namespace wdt.Controller
         private static int _logAttempts = 3;
         internal User LoggedOnUser { get; private set; }
         private readonly bool _isTesting;
-        private Lazy<BaseController> _primaryController;
-        internal BaseController PrimaryBaseController => _primaryController.Value;
-
-
-        //{ get; } = new Lazy<BaseController>( () => BaseController.GetPrimaryController(LoggedOnUser) )  ;
-        private BaseController _childBaseController;
+        private Lazy<BaseController> _primaryController = new Lazy<BaseController>();
+        private BaseController PrimaryBaseController => _primaryController.Value;
 
         // constructor
         internal LoginController(bool isTesting)
@@ -28,8 +24,6 @@ namespace wdt.Controller
 
         internal override void Start()
         {
-            // base class start clears the screen only
-            Console.Clear();
             LoggedOnUser = _isTesting ? GetFakeUerFromInput() : Login();
             _primaryController = new Lazy<BaseController>(GetPrimaryController(this));
             PrimaryBaseController.Start();
@@ -37,6 +31,7 @@ namespace wdt.Controller
 
         private static User Login()
         {
+            Console.Clear();
             if (--_logAttempts < 0)
             {
                 throw new TooManyLoginsException("Exhausted max login attempts");
@@ -73,24 +68,71 @@ namespace wdt.Controller
         // test mode, no login required
         private static User GetFakeUerFromInput()
         {
+            while (true)
+            {
+                Console.Clear();
+                var userLogon = SelectUserMenu();
+                var maxInput = Enum.GetNames(typeof(UserType)).Length;
+                userLogon.Append($"{Environment.NewLine}{++maxInput}. Quit{Environment.NewLine}");
+                var option = GetInput(userLogon.ToString(), maxInput);
+                if (option < 0) continue;
+                if (option == maxInput) Environment.Exit(0);
+                var user = UserFactory.MakeUserFromInt(--option);
+                // if user type is franchisee need to select store
+                if (user.GetType() == typeof(Franchisee))
+                {
+                    ((Franchisee) user).Location = GetUserLocation();
+                }
+                return user;
+            }
+        }
+
+
+        // get location for user
+        private static Franchises GetUserLocation()
+        {
+            while (true)
+            {
+                Console.Clear();
+                var locationMenu = SelectLocationMenu();
+                var maxInput = Enum.GetNames(typeof(Franchises)).Length;
+                var option = GetInput(locationMenu.ToString(), maxInput, "Enter Store to use: ");
+                if (option < 0) continue;
+                return (Franchises) option;
+            }
+        }
+
+        // build user type select menu
+        private static StringBuilder SelectUserMenu()
+        {
             const string greetingHeader = "Select User Type";
 
             var userLogon = new StringBuilder(greetingHeader);
-            userLogon.Append($"\n{greetingHeader.MenuPad()}");
-            // menu options counter
+            userLogon.Append($"{Environment.NewLine}{greetingHeader.MenuHeaderPad()}");
             Enum.GetNames(typeof(UserType))
                 .ToList()
-                .ForEach(type =>
+                .ForEach(userType =>
                 {
-                    var count = (int) Enum.Parse(typeof(UserType), type) + 1;
-                    userLogon.Append($"\n{count}. {type}");
+                    var count = (int) Enum.Parse(typeof(UserType), userType);
+                    userLogon.Append($"{Environment.NewLine}{++count}. {userType}");
                 });
+            return userLogon;
+        }
 
-            var maxInput = Enum.GetNames(typeof(UserType)).Length + 1;
-            userLogon.Append($"\n{maxInput}. Quit\n");
-            var option = GetInput(userLogon.ToString(), maxInput);
-            if (option == 4) Environment.Exit(0);
-            return UserFactory.MakeUserFromInt(--option);
+        // select location for franchisee
+        private static StringBuilder SelectLocationMenu()
+        {
+            const string greetingHeader = "Select Store";
+            var franchiseSelect = new StringBuilder(greetingHeader);
+            franchiseSelect.Append($"{Environment.NewLine}{greetingHeader.MenuHeaderPad()}");
+            Enum.GetValues(typeof(Franchises)).Cast<Franchises>()
+                .ToList()
+                .ForEach(franchise =>
+                {
+                    var count = (int) franchise;
+                    franchiseSelect.Append($"{Environment.NewLine}{++count}. {franchise.GetStringValue()}");
+                });
+            return franchiseSelect.Append($"{Environment.NewLine}");
         }
     }
 }

@@ -1,7 +1,7 @@
 using System;
 using Xunit;
 using wdt.Model;
-using wdt.utils;
+
 
 namespace UnitTests
 {
@@ -14,7 +14,7 @@ namespace UnitTests
         public void UserFactory_TestCorrectTypes(int value)
         {
             var user = UserFactory.MakeUserFromInt(value);
-            Assert.Equal(user.Type, (UserType)value );
+            Assert.Equal(user.UserType, (UserType)value );
         }
 
         [Theory]

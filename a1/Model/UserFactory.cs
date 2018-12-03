@@ -11,7 +11,10 @@ namespace wdt.Model
             if (selection < 0 || selection >= Enum.GetNames(typeof(UserType)).Length)
                 throw new IndexOutOfRangeException("Unexpected user type");
             var userType = (UserType) selection;
-            return new User(userName, userType);
+            var userTypeClassName = $"wdt.Model.{userType.ToString()}";
+            var userTypeClassType = Type.GetType(userTypeClassName, true);
+            var userInstance = Activator.CreateInstance(userTypeClassType, userName);
+            return (User)userInstance;
         }
     }
 }

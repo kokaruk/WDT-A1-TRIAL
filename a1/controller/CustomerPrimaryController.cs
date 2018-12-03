@@ -1,6 +1,6 @@
 namespace wdt.Controller
 {
-    public class BuyerPrimaryController
+    public class CustomerPrimaryController
     {
         
     }
