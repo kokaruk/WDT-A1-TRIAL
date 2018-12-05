@@ -50,6 +50,7 @@ fabric.properties
 
 \.idea/
 
+obj/
 bin/
 SupportingFiles/
 
