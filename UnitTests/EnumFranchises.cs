@@ -1,7 +1,6 @@
-using System;
+using Wdt.Model;
 using Xunit;
-using wdt.Model;
-using wdt.utils;
+using Wdt.Utils;
 
 namespace UnitTests
 {
@@ -14,5 +13,13 @@ namespace UnitTests
         {
             Assert.Equal(franchises.GetStringValue(), attribute);
         }
+
+        [Theory]
+        [InlineData(0, Franchises.CBD)]
+        public void Franchises_EnumsReturnCorrectInt(int value, Franchises franchise)
+        {
+            Assert.Equal(value, (int)franchise);
+        }
+        
     }
 }

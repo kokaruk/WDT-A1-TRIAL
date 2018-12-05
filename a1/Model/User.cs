@@ -1,8 +1,8 @@
-namespace wdt.Model
+namespace Wdt.Model
 {
     public class User
     {
-        public string Name { get; }
+        private string Name { get; }
         public UserType UserType { get; set; }
         protected User(string name)
         {
@@ -10,7 +10,7 @@ namespace wdt.Model
         }
     }
 
-    class Customer : User
+    public class Customer : User
     {
         public Customer(string name) : base(name)
         {
@@ -18,7 +18,7 @@ namespace wdt.Model
         }
     }
 
-    class Franchisee : User
+    public class Franchisee : User
     {
         public Franchises Location { get; set; }
         public Franchisee(string name) : base(name)
@@ -27,7 +27,7 @@ namespace wdt.Model
         }
     }
 
-    class Owner : User
+    public class Owner : User
     {
         public Owner(string name) : base(name)
         {

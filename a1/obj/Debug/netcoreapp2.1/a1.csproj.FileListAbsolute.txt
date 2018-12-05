@@ -9,3 +9,4 @@
 /Users/dimz/Developer/Dotnet/WDT/a1/a1/obj/Debug/netcoreapp2.1/a1.AssemblyInfo.cs
 /Users/dimz/Developer/Dotnet/WDT/a1/a1/obj/Debug/netcoreapp2.1/a1.dll
 /Users/dimz/Developer/Dotnet/WDT/a1/a1/obj/Debug/netcoreapp2.1/a1.pdb
+/Users/dimz/Developer/Dotnet/WDT/a1/a1/bin/Debug/netcoreapp2.1/appsettings.json

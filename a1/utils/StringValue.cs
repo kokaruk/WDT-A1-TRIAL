@@ -1,7 +1,12 @@
 using System;
+using System.Diagnostics.CodeAnalysis;
 
-namespace wdt.utils
+namespace Wdt.Utils
 {
+    /// <summary>
+    /// Sets string attribute for enum members
+    /// </summary>
+    [SuppressMessage("ReSharper", "InheritdocConsiderUsage")]
     public class StringValue : Attribute
     {
         public string Value { get; }

@@ -1,41 +1,57 @@
 using System;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
-using wdt.DAL;
-using wdt.Model;
-using wdt.utils;
+using Wdt.DAL;
+using Wdt.Model;
+using Wdt.Utils;
 
-namespace wdt.Controller
+namespace Wdt.Controller
 {
     internal class LoginController : BaseController
     {
         // max allowed login attempts
-        private static int _logAttempts = 3;
+        private static int _logAttempts = 5;
         internal User LoggedOnUser { get; private set; }
-        private readonly bool _isTesting;
-        private Lazy<BaseController> _primaryController = new Lazy<BaseController>();
+        private Lazy<BaseController> _primaryController;
         private BaseController PrimaryBaseController => _primaryController.Value;
 
-        // constructor
-        internal LoginController(bool isTesting)
-        {
-            _isTesting = isTesting;
-        }
 
         internal override void Start()
         {
-            LoggedOnUser = _isTesting ? GetFakeUerFromInput() : Login();
-            _primaryController = new Lazy<BaseController>(GetPrimaryController(this));
+            while (true)
+            {
+                try
+                {
+                    LoggedOnUser = Login();
+                    break;
+                }
+                catch (Exception ex)  when  (ex is NullReferenceException || ex is SqlException || ex is TypeLoadException)
+                {
+                    // is thrown when failed to create instance of user, trying again
+                    Console.Clear();
+                    Console.WriteLine($"Incorrect User name / Password{Environment.NewLine}");
+                    Start();
+                }
+                catch (TooManyLoginsException ex)
+                {
+                    Console.WriteLine(ex.Message);
+                    Environment.Exit(0);
+                }
+            }
+            
+            
+            _primaryController = new Lazy<BaseController>(BuildPrimaryController(this));
             PrimaryBaseController.Start();
         }
 
-        private static User Login()
+        private User Login()
         {
-            Console.Clear();
-            if (--_logAttempts < 0)
-            {
-                throw new TooManyLoginsException("Exhausted max login attempts");
-            }
+            // if user exists, the caller is a child submenu and we need to log out
+            if (LoggedOnUser != null && !Program.Testing) Environment.Exit(0);
+            // if this is a test mode (set as string argument)
+            if (Program.Testing) return DalFactory.User.GetUser("fake user name", "fake password");
+            if (--_logAttempts < 0) throw new TooManyLoginsException("Exhausted max login attempts");
 
             Console.Write("Username: ");
             var userName = Console.ReadLine();
@@ -55,6 +71,7 @@ namespace wdt.Controller
                     }
                     else
                     {
+                        if (pass.Length <= 0) continue;
                         Console.Write("\b \b");
                         pass.Length--;
                     }
@@ -62,77 +79,8 @@ namespace wdt.Controller
 
                 return pass.ToString();
             }))();
-            return DalFactory.UserDal.GetUser(userName, password);
-        }
 
-        // test mode, no login required
-        private static User GetFakeUerFromInput()
-        {
-            while (true)
-            {
-                Console.Clear();
-                var userLogon = SelectUserMenu();
-                var maxInput = Enum.GetNames(typeof(UserType)).Length;
-                userLogon.Append($"{Environment.NewLine}{++maxInput}. Quit{Environment.NewLine}");
-                var option = GetInput(userLogon.ToString(), maxInput);
-                if (option < 0) continue;
-                if (option == maxInput) Environment.Exit(0);
-                var user = UserFactory.MakeUserFromInt(--option);
-                // if user type is franchisee need to select store
-                if (user.GetType() == typeof(Franchisee))
-                {
-                    ((Franchisee) user).Location = GetUserLocation();
-                }
-                return user;
-            }
-        }
-
-
-        // get location for user
-        private static Franchises GetUserLocation()
-        {
-            while (true)
-            {
-                Console.Clear();
-                var locationMenu = SelectLocationMenu();
-                var maxInput = Enum.GetNames(typeof(Franchises)).Length;
-                var option = GetInput(locationMenu.ToString(), maxInput, "Enter Store to use: ");
-                if (option < 0) continue;
-                return (Franchises) option;
-            }
-        }
-
-        // build user type select menu
-        private static StringBuilder SelectUserMenu()
-        {
-            const string greetingHeader = "Select User Type";
-
-            var userLogon = new StringBuilder(greetingHeader);
-            userLogon.Append($"{Environment.NewLine}{greetingHeader.MenuHeaderPad()}");
-            Enum.GetNames(typeof(UserType))
-                .ToList()
-                .ForEach(userType =>
-                {
-                    var count = (int) Enum.Parse(typeof(UserType), userType);
-                    userLogon.Append($"{Environment.NewLine}{++count}. {userType}");
-                });
-            return userLogon;
-        }
-
-        // select location for franchisee
-        private static StringBuilder SelectLocationMenu()
-        {
-            const string greetingHeader = "Select Store";
-            var franchiseSelect = new StringBuilder(greetingHeader);
-            franchiseSelect.Append($"{Environment.NewLine}{greetingHeader.MenuHeaderPad()}");
-            Enum.GetValues(typeof(Franchises)).Cast<Franchises>()
-                .ToList()
-                .ForEach(franchise =>
-                {
-                    var count = (int) franchise;
-                    franchiseSelect.Append($"{Environment.NewLine}{++count}. {franchise.GetStringValue()}");
-                });
-            return franchiseSelect.Append($"{Environment.NewLine}");
+            return DalFactory.User.GetUser(userName, password);
         }
     }
 }

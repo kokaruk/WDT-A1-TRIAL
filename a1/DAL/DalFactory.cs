@@ -1,24 +1,45 @@
-using wdt.Model;
-using wdt.utils;
+using System.Data;
+using System.Collections.Generic;
+using System.Data.SqlClient;
+using System.Linq;
+using System.Text;
+using Wdt.Controller;
+using Wdt.Model;
+using Wdt.Utils;
 
-namespace wdt.DAL
+namespace Wdt.DAL
 {
-    public class DalFactory
+    public static class DalFactory
     {
-        public static IUserDal UserDal { get; set; }
-
+        public static IUserDal User { get; }
+        
         static DalFactory()
         {
-            UserDal = new FakeUserDal();
+            User = UserDal.Instance;
         }
 
-        private class FakeUserDal : IUserDal
+        internal static dynamic ExecuteScalar(string procedure, Dictionary<string, string> connParams)
         {
-            public User GetUser(string username, string password)
+            using (var connection = Program.ConnectionString.CreateConnection())
             {
-                return new Owner(username);
+                connection.Open();
+                using (var command = connection.CreateCommand())
+                {
+                    command.CommandText = procedure;
+                    command.CommandType = CommandType.StoredProcedure;
+                    command.fillParams(connParams);
+                    return command.ExecuteScalar();
+                }
             }
         }
+
+//        private static void fillParams(SqlCommand command, Dictionary<string, string> connParams)
+//        {
+//            foreach (var keyValue in connParams)
+//            {
+//                command.Parameters.AddWithValue(keyValue.Key, keyValue.Value);
+//            }
+//        }
         
     }
 }

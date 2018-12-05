@@ -10,10 +10,10 @@
       "/usr/local/share/dotnet/sdk/NuGetFallbackFolder"
     ],
     "originalTargetFrameworks": [
-      "netcoreapp2.1"
+      "netcoreapp2.2"
     ],
     "frameworks": {
-      "netcoreapp2.1": {
+      "netcoreapp2.2": {
         "projectReferences": {
           "/Users/dimz/Developer/Dotnet/WDT/a1/a1/a1.csproj": {
             "projectPath": "/Users/dimz/Developer/Dotnet/WDT/a1/a1/a1.csproj"
@@ -28,25 +28,29 @@
     }
   },
   "frameworks": {
-    "netcoreapp2.1": {
+    "netcoreapp2.2": {
       "dependencies": {
+        "Microsoft.Extensions.Configuration.Json": {
+          "target": "Package",
+          "version": "[2.2.0, )"
+        },
         "Microsoft.NET.Test.Sdk": {
           "target": "Package",
-          "version": "[15.7.0, )"
+          "version": "[15.9.0, )"
         },
         "Microsoft.NETCore.App": {
           "suppressParent": "All",
           "target": "Package",
-          "version": "[2.1.0, )",
+          "version": "[2.2.0, )",
           "autoReferenced": true
         },
         "xunit": {
           "target": "Package",
-          "version": "[2.3.1, )"
+          "version": "[2.4.1, )"
         },
         "xunit.runner.visualstudio": {
           "target": "Package",
-          "version": "[2.3.1, )"
+          "version": "[2.4.1, )"
         }
       },
       "imports": [

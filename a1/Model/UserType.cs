@@ -1,4 +1,4 @@
-namespace wdt.Model
+namespace Wdt.Model
 {
     public enum UserType
     {

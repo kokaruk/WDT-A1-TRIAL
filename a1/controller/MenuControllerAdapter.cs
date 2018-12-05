@@ -1,11 +1,16 @@
-using System.Collections.Generic;
-using System.Text;
-using wdt.utils;
 using System;
+using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
+using System.Text;
+using Wdt.Utils;
 
-namespace wdt.Controller
+namespace Wdt.Controller
 {
-    internal abstract class MenuControllerAdapter: BaseController, IMenuController
+    /// <summary>
+    /// 
+    /// </summary>
+    [SuppressMessage("ReSharper", "InheritdocConsiderUsage")]
+    internal abstract class MenuControllerAdapter : BaseController, IMenuController
     {
         public string MenuHeader { get; set; }
         public BaseController Parent { get; }
@@ -15,13 +20,13 @@ namespace wdt.Controller
         {
             Parent = parent;
         }
-        
+
         internal override void Start()
         {
             Console.Clear();
             GetInput();
         }
-        
+
         private void GetInput()
         {
             var maxInput = BuildMenu(out var menu);
@@ -34,17 +39,14 @@ namespace wdt.Controller
             {
                 Children[--option].Start();
             }
-            
         }
-        
+
         // build menu string builder
         public int BuildMenu(out StringBuilder menu)
         {
             menu = new StringBuilder(MenuHeader);
             menu.Append($"{Environment.NewLine}{MenuHeader.MenuHeaderPad()}");
             var maxValue = Children.Count + 1;
-            // ReSharper waring results in double return statement
-            // ReSharper disable once InvertIf
             if (Children.Count > 0)
             {
                 for (var i = 0; i < Children.Count; i++)
@@ -52,10 +54,11 @@ namespace wdt.Controller
                     menu.Append($"{Environment.NewLine}{i + 1}. {Children[i].MenuHeader}");
                 }
             }
-            menu.Append($"{Environment.NewLine}{maxValue}. Return to Main Menu{Environment.NewLine}");
+
+            menu.Append( Parent.GetType() == typeof(LoginController) && !Program.Testing
+                ? $"{Environment.NewLine}{maxValue}. Exit{Environment.NewLine}"
+                : $"{Environment.NewLine}{maxValue}. Return to Main Menu{Environment.NewLine}");
             return maxValue;
         }
-        
-        
     }
 }

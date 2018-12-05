@@ -1,6 +1,6 @@
 using System.Text;
 
-namespace wdt.Controller
+namespace Wdt.Controller
  {
      internal interface IMenuController
      {

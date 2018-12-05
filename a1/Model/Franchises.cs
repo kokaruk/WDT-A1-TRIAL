@@ -1,18 +1,19 @@
-using wdt.utils;
+using Wdt.Utils;
 
-namespace wdt.Model
+namespace Wdt.Model
 {
+    
     public enum Franchises
     {
         [StringValue("Melbourne CBD")]
-        CBD,
+        CBD  = 0,
         [StringValue("North Melbourne")]
-        North,
+        North = 1,
         [StringValue("East Melbourne")]
-        East,
+        East = 2,
         [StringValue("South Melbourne")]
-        South,
+        South = 3,
         [StringValue("West Melbourne")]
-        West
+        West = 4
     }
 }

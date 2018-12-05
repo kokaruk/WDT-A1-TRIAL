@@ -51,6 +51,7 @@ fabric.properties
 \.idea/
 
 bin/
+SupportingFiles/
 
 #Apple System
 .DS_Store

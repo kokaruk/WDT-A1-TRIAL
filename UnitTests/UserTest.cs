@@ -1,11 +1,11 @@
 using System;
+using Wdt.Model;
 using Xunit;
-using wdt.Model;
 
 
 namespace UnitTests
 {
-    public class UserFactoryTest
+    public class UserTest
     {
         [Theory]
         [InlineData(0)]
@@ -20,10 +20,20 @@ namespace UnitTests
         [Theory]
         [InlineData(-1)]
         [InlineData(3)]
-        public void userFactory_ThrowsErrors(int value)
+        public void UserFactory_ThrowsErrors(int value)
         {
             Assert.Throws<IndexOutOfRangeException>(() => UserFactory.MakeUserFromInt(value));
         }    
+        
+        [Theory]
+        [InlineData(0, typeof(Owner))]
+        [InlineData(1, typeof(Franchisee))]
+        [InlineData(2, typeof(Customer))]
+        public void User_AcceptableInstancesTest(int value, Type userClassType)
+        {
+            var instance = (User)Activator.CreateInstance(userClassType, "test name");
+            Assert.Equal(instance.UserType, (UserType)value);
+        }
         
     }
 }

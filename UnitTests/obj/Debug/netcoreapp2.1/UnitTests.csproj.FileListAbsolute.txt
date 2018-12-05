@@ -15,3 +15,4 @@
 /Users/dimz/Developer/Dotnet/WDT/a1/UnitTests/bin/Debug/netcoreapp2.1/a1.dll
 /Users/dimz/Developer/Dotnet/WDT/a1/UnitTests/bin/Debug/netcoreapp2.1/a1.pdb
 /Users/dimz/Developer/Dotnet/WDT/a1/UnitTests/obj/Debug/netcoreapp2.1/UnitTests.csproj.CopyComplete
+/Users/dimz/Developer/Dotnet/WDT/a1/UnitTests/bin/Debug/netcoreapp2.1/appsettings.json
