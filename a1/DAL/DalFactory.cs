@@ -32,14 +32,5 @@ namespace Wdt.DAL
                 }
             }
         }
-
-//        private static void fillParams(SqlCommand command, Dictionary<string, string> connParams)
-//        {
-//            foreach (var keyValue in connParams)
-//            {
-//                command.Parameters.AddWithValue(keyValue.Key, keyValue.Value);
-//            }
-//        }
-        
     }
 }
