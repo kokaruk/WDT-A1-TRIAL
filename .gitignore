@@ -50,7 +50,9 @@ fabric.properties
 
 \.idea/
 
+obj/
 bin/
+SupportingFiles/
 
 #Apple System
 .DS_Store

@@ -1,39 +1,58 @@
 using System;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
-using wdt.DAL;
-using wdt.Model;
-using wdt.utils;
+using Wdt.DAL;
+using Wdt.Model;
+using Wdt.Utils;
 
-namespace wdt.controller
+namespace Wdt.Controller
 {
-    internal class LoginController : Controller
+    internal class LoginController : BaseController
     {
-        private static int _logAttempts = 3;
+        // max allowed login attempts
+        private static int _logAttempts = 5;
         internal User LoggedOnUser { get; private set; }
-        private readonly bool _testing;
+        private Lazy<BaseController> _primaryController;
+        private BaseController PrimaryBaseController => _primaryController.Value;
 
-        internal LoginController(bool testing)
-        {
-            _testing = testing;
-        }
 
         internal override void Start()
         {
-            // base class start clear the screen
-            base.Start();
-            LoggedOnUser = _testing ? GetFakeUerFromInput() : Login();
-            Console.WriteLine($"\nUsername: {LoggedOnUser.Name}, Type: {LoggedOnUser.Type} ");
+            while (true)
+            {
+                try
+                {
+                    LoggedOnUser = Login();
+                    break;
+                }
+                catch (Exception ex)  when  (ex is NullReferenceException || ex is SqlException || ex is TypeLoadException)
+                {
+                    // is thrown when failed to create instance of user, trying again
+                    Console.Clear();
+                    Console.WriteLine($"Incorrect User name / Password{Environment.NewLine}");
+                    Start();
+                }
+                catch (TooManyLoginsException ex)
+                {
+                    Console.WriteLine(ex.Message);
+                    Environment.Exit(0);
+                }
+            }
+            
+            
+            _primaryController = new Lazy<BaseController>(BuildPrimaryController(this));
+            PrimaryBaseController.Start();
         }
 
-        private static User Login()
+        private User Login()
         {
-            if (_logAttempts <= 0)
-            {
-                throw new TooManyLoginsException("Exhausted max login attempts");
-            }
+            // if user exists, the caller is a child submenu and we need to log out
+            if (LoggedOnUser != null && !Program.Testing) Environment.Exit(0);
+            // if this is a test mode (set as string argument)
+            if (Program.Testing) return DalFactory.User.GetUser("fake user name", "fake password");
+            if (--_logAttempts < 0) throw new TooManyLoginsException("Exhausted max login attempts");
 
-            _logAttempts--;
             Console.Write("Username: ");
             var userName = Console.ReadLine();
             Console.Write("Password: ");
@@ -52,6 +71,7 @@ namespace wdt.controller
                     }
                     else
                     {
+                        if (pass.Length <= 0) continue;
                         Console.Write("\b \b");
                         pass.Length--;
                     }
@@ -59,46 +79,8 @@ namespace wdt.controller
 
                 return pass.ToString();
             }))();
-            return DalFactory.UserDal.GetUser(userName, password);
-        }
 
-        // test mode, no login required
-        private static User GetFakeUerFromInput()
-        {
-            var userLogon = new StringBuilder(
-                "Select User Type\n================");
-            // menu options counter
-            var count = 0;
-            Enum.GetNames(typeof(UserType))
-                .ToList()
-                .ForEach(
-                    type =>
-                    {
-                        count = (int) Enum.Parse(typeof(UserType), type) + 1;
-                        userLogon.Append($"\n{count}. {type}");
-                    }
-                );
-            userLogon.Append($"\n{++count}. Quit\n");
-
-            while (true)
-            {
-                var maxInput = Enum.GetNames(typeof(UserType)).Length + 1;
-
-                Console.WriteLine(userLogon);
-                Console.Write("Enter an option: ");
-                var input = Console.ReadLine();
-                if (!int.TryParse(input, out var option)
-                    || !option.IsWithinMaxValue(maxInput))
-                {
-                    Console.Clear();
-                    Console.Write("Invalid Input\n\n");
-                    continue;
-                }
-
-                if (option == 4) Environment.Exit(0);
-
-                return UserFactory.MakeUserFromInt(--option);
-            }
+            return DalFactory.User.GetUser(userName, password);
         }
     }
 }

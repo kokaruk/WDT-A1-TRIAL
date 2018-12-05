@@ -1,7 +1,11 @@
 using System;
 
-namespace wdt.utils
+namespace Wdt.Utils
 {
+    /// <summary>
+    /// Exception thrown when maximum login attempts is exhausted 
+    /// </summary>
+    // ReSharper disable once InheritdocConsiderUsage
     public class TooManyLoginsException : Exception
     {
         public TooManyLoginsException()
