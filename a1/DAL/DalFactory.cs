@@ -27,7 +27,7 @@ namespace Wdt.DAL
                 {
                     command.CommandText = procedure;
                     command.CommandType = CommandType.StoredProcedure;
-                    command.fillParams(connParams);
+                    command.FillParams(connParams);
                     return command.ExecuteScalar();
                 }
             }

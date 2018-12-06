@@ -29,7 +29,7 @@ namespace Wdt.Utils
         public static SqlConnection CreateConnection(this string connectionString) =>
             new SqlConnection(connectionString);
 
-        public static void fillParams(this SqlCommand command, Dictionary<string, string> connParams)
+        public static void FillParams(this SqlCommand command, Dictionary<string, string> connParams)
         {
             foreach (var keyValue in connParams)
             {
