@@ -33,7 +33,7 @@ namespace Wdt.DAL
                 {"userName", userName}, 
                 {"password", password}
             };
-            var userType = DalFactory.ExecuteScalar("get user type", connParams);
+            var userType = DalFactory.ExecuteScalarAsync("get user type", connParams).Result;
             var user = UserFactory.MakeUser(userName, userType);
             return user;
         }

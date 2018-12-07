@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Data.SqlClient;
 using System.Globalization;
+using System.Threading;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Wdt.Controller;
-using Wdt.DAL;
+using Wdt.Utils;
 
 namespace Wdt
 {
@@ -50,7 +51,6 @@ namespace Wdt
             Testing = args.Length > 0 && args[0] == "test";
             Console.Clear();
             BaseController login = new LoginController();
-            Utils.CreateLoading 
             login.Start();
         }
     }

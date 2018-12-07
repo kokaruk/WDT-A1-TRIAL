@@ -4,54 +4,32 @@ using System.Threading.Tasks;
 
 namespace Wdt.Utils
 {
+    /// <summary>
+    /// heavily modified code from
+    /// https://codereview.stackexchange.com/questions/152159/display-loading-text-with-spinner-in-console?rq=1
+    /// </summary>
     public class ConsoleLoadingText
     {
-        public const string DefaultProductName = "";
-        public const string DefaultLoadingText = "Loading...";
-        public const int DefaultMillisecondsDelay = 250;
+        private const string DefaultLoadingText = "Loading...";
+        private const int DefaultMillisecondsDelay = 250;
+        private static readonly string[] _spinner = {"|", "/", "-", "\\"};
+        private bool _continue = true;
 
-        static string[] spinner = { "|", "/", "-", "\\" };
-
-        readonly string productName, loadingText;
-        readonly int millisecondsDelay;
-
-        int i;
-        bool @continue = true;
-
+        private int _i;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="T:Knoble.Utils.Loading"/> class.
-        /// Displays "{productName} {loadingText} x" where the spinner (x) spins every {millisecondsDelay} milliseconds.
+        /// Returns a task that, when running, continuously prints the loading text.
         /// </summary>
-        /// <param name="productName">Product name.</param>
-        /// <param name="loadingText">Loading text.</param>
-        /// <param name="millisecondsDelay">Milliseconds delay.</param>
-        public ConsoleLoadingText (string productName, string loadingText = DefaultLoadingText, int millisecondsDelay = DefaultMillisecondsDelay)
+        public Task Display()
         {
-            if (productName == null)
-                throw new ArgumentException (nameof (productName));
-            if (loadingText == null)
-                throw new ArgumentException (nameof (loadingText));
-            if (millisecondsDelay < 0)
-                throw new ArgumentException (nameof (millisecondsDelay));
-            this.productName = productName;
-            this.loadingText = loadingText;
-            this.millisecondsDelay = millisecondsDelay;
-        }
-
-        /// <summary>
-        /// Returns a task that, when running, continously prints the loading text.
-        /// </summary>
-        public Task Display ()
-        {
-            return Task.Run (() =>
+            Console.Clear();
+            return Task.Run(() =>
             {
-                @continue = true;
-                while (@continue)
+                while (_continue)
                 {
-                    Console.Write ($"\r{productName} {loadingText} {spinner[i]}");
-                    i = (i + 1) % spinner.Length;
-                    Thread.Sleep (millisecondsDelay);
+                    Console.Write($"\r{DefaultLoadingText} {_spinner[_i]}");
+                    _i = (_i + 1) % _spinner.Length;
+                    Thread.Sleep(DefaultMillisecondsDelay);
                 }
             });
         }
@@ -59,9 +37,9 @@ namespace Wdt.Utils
         /// <summary>
         /// Stop this instance from displaying.
         /// </summary>
-        public void Stop ()
+        public void Stop()
         {
-            @continue = false;
+            _continue = false;
         }
     }
 }
