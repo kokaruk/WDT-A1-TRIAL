@@ -50,6 +50,7 @@ namespace Wdt
             Testing = args.Length > 0 && args[0] == "test";
             Console.Clear();
             BaseController login = new LoginController();
+            Utils.CreateLoading 
             login.Start();
         }
     }
