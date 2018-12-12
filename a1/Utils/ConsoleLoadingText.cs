@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 namespace Wdt.Utils
 {
     /// <summary>
-    /// heavily modified code from
+    /// heavily modified code snippet from
     /// https://codereview.stackexchange.com/questions/152159/display-loading-text-with-spinner-in-console?rq=1
     /// </summary>
     public class ConsoleLoadingText
@@ -18,12 +18,12 @@ namespace Wdt.Utils
         private int _i;
 
         /// <summary>
-        /// Returns a task that, when running, continuously prints the loading text.
+        /// Continuously prints the loading text.
         /// </summary>
-        public Task Display()
+        public void Display()
         {
             Console.Clear();
-            return Task.Run(() =>
+            Task.Run(() =>
             {
                 while (_continue)
                 {

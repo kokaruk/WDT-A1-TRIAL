@@ -14,29 +14,38 @@ namespace Wdt.DAL
     /// </summary>
     public class UserDal : IUserDal
     {
-        
-       //  static instance holder
+        /// <summary>
+        /// static instance holder
+        /// </summary>
         private static readonly Lazy<IUserDal> _instance = new Lazy<IUserDal>(() => new UserDal());
-        
-        // private constructor
-        private UserDal()
-        {
-        }
 
-        // accessor for instance 
+        /// <summary>
+        /// private constructor
+        /// </summary>
+        private UserDal(){}
+
+        /// <summary>
+        /// accessor for instance
+        /// </summary>
         public static IUserDal Instance => Program.Testing ? new FakeUserDal() : _instance.Value;
         
+        private readonly IDalDbProxy _dbProxy = DalDbProxy.Instance;
+        
+        /// <summary>
+        /// return instance of user from username / password combo
+        /// </summary>
         public User GetUser(string userName, string password)
         {
-            var connParams = new Dictionary<string, string>
+            var connParams = new Dictionary<string, dynamic>
             {
-                {"userName", userName}, 
+                {"userName", userName},
                 {"password", password}
             };
-            var userType = DalFactory.ExecuteScalarAsync("get user type", connParams).Result;
+            var userType = _dbProxy.ExecuteScalarAsync("get user type", connParams).Result;
             var user = UserFactory.MakeUser(userName, userType);
             return user;
         }
+
         /// <summary>
         /// fake userClass for testing mode only, when no user logon is required
         /// </summary>
@@ -120,8 +129,5 @@ namespace Wdt.DAL
                 return franchiseSelect.Append($"{Environment.NewLine}");
             }
         }
-        
-        
     }
-    
 }

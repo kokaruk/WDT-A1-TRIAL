@@ -27,13 +27,20 @@ namespace Wdt.Controller
             GetInput();
         }
 
-        private void GetInput()
+        protected virtual void GetInput()
         {
             var maxInput = BuildMenu(out var menu);
             var option = GetInput(menu.ToString(), maxInput);
             if (option == maxInput || option == -1)
             {
-                Parent.Start();
+                if (Parent.GetType() == typeof(LoginController) && !Program.Testing)
+                {
+                    Environment.Exit(0);
+                }
+                else
+                {
+                    Parent.Start();
+                }
             }
             else
             {
@@ -41,7 +48,11 @@ namespace Wdt.Controller
             }
         }
 
-        // build menu string builder
+        /// <summary>
+        /// menu string builder
+        /// </summary>
+        /// <param name="menu"> string builder for menu contents</param>
+        /// <returns></returns>
         public int BuildMenu(out StringBuilder menu)
         {
             menu = new StringBuilder(MenuHeader);
@@ -55,7 +66,7 @@ namespace Wdt.Controller
                 }
             }
 
-            menu.Append( Parent.GetType() == typeof(LoginController) && !Program.Testing
+            menu.Append(Parent.GetType() == typeof(LoginController) && !Program.Testing
                 ? $"{Environment.NewLine}{maxValue}. Exit{Environment.NewLine}"
                 : $"{Environment.NewLine}{maxValue}. Return to Main Menu{Environment.NewLine}");
             return maxValue;

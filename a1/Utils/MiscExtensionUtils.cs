@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Data.SqlClient;
 
 namespace Wdt.Utils
@@ -29,7 +30,17 @@ namespace Wdt.Utils
         public static SqlConnection CreateConnection(this string connectionString) =>
             new SqlConnection(connectionString);
 
-        public static void FillParams(this SqlCommand command, Dictionary<string, string> connParams)
+        public static SqlCommand CreateProcedureCommand(this SqlConnection con,
+            string procedure, Dictionary<string, dynamic> connParams = null)
+        {
+            var command = con.CreateCommand();
+            command.CommandText = procedure;
+            command.CommandType = CommandType.StoredProcedure;
+            if (connParams != null) command.FillParams(connParams);
+            return command;
+        }
+        
+        private static void FillParams(this SqlCommand command, Dictionary<string, dynamic> connParams)
         {
             foreach (var keyValue in connParams)
             {

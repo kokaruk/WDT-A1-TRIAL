@@ -3,7 +3,7 @@ namespace Wdt.Model
     public class User
     {
         private string Name { get; }
-        public UserType UserType { get; set; }
+        public UserType UserType { get; protected set; }
         protected User(string name)
         {
             Name = name;
