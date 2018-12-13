@@ -132,3 +132,41 @@ CREATE FUNCTION dbo.[get request structure](@RequestID as int)
   FROM StockRequest SR
   WHERE SR.StockRequestID = @RequestID
   );
+
+
+-- owner inventory view
+CREATE VIEW OwnerInventoryView
+  AS
+    SELECT OI.ProductID,
+           P.Name,
+           OI.StockLevel
+    FROM OwnerInventory OI
+           LEFT JOIN Product P on OI.ProductID = P.ProductID
+GO
+
+
+-- get all Owner Inventory with stock level
+create procedure dbo.[get all owner inventory]
+    @offset integer, @fetch integer
+AS
+  select *
+  from OwnerInventoryView
+  order by ProductID offset @offset rows
+  fetch next @fetch rows only
+go
+
+-- update stock level
+create procedure dbo.[reset stock level]
+    @ProductId int, @level int
+AS
+  begin
+    declare @StockLevel int;
+    select @StockLevel = StockLevel FROM OwnerInventory where ProductID = @ProductId;
+    if @StockLevel < @level
+      update OwnerInventory set StockLevel = @level where ProductID = @ProductId;
+    else
+      THROW 51000, 'enough stock', 1;
+  end
+
+go
+
