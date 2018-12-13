@@ -68,6 +68,7 @@ namespace Wdt.Controller
                 if (int.TryParse(input, out var option) && option.IsWithinMaxValue(maxInput)) return option;
                 Console.Clear();
                 Console.WriteLine("Invalid Input");
+                Console.WriteLine();
             }
         }
 

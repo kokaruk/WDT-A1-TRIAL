@@ -40,7 +40,7 @@ namespace Wdt.Utils
             return command;
         }
         
-        private static void FillParams(this SqlCommand command, Dictionary<string, dynamic> connParams)
+        internal static void FillParams(this SqlCommand command, Dictionary<string, dynamic> connParams)
         {
             foreach (var keyValue in connParams)
             {

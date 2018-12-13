@@ -14,7 +14,11 @@ namespace Wdt
         private static readonly Lazy<IConfiguration> _configuration;
         private static IConfiguration Configuration => _configuration.Value;
         private static readonly Lazy<string> _connectionString;
-        public static string ConnectionString => _connectionString.Value;
+        internal static string ConnectionString => _connectionString.Value;
+        // 
+        private static readonly Lazy<int> _invResetThreshold;
+        internal static int InvResetThreshold => _invResetThreshold.Value;
+        
         public static bool Testing { get; private set; }
         
         /// <summary>
@@ -44,6 +48,8 @@ namespace Wdt
                 };
                 return sqlString.ConnectionString;
             });
+            _invResetThreshold = new Lazy<int>(() =>
+                    Configuration.GetSection("OwnerManageInventory").GetValue<int>("UpdateThreshold"));
         }
 
         private static void Main(string[] args)

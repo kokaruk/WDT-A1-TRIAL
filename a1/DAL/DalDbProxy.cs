@@ -75,17 +75,37 @@ namespace Wdt.DAL
             }
         }
 
-
-        public async void ExecuteNonQuery(string procedure,
+        /// <summary>
+        ///  non query with transaction rollback on exception 
+        /// </summary>
+        public void ExecuteNonQuery(string procedure,
             Dictionary<string, dynamic> connParams)
         {
             _loader.Display();
             using (var con = Program.ConnectionString.CreateConnection())
-            using (var command = con.CreateProcedureCommand(procedure, connParams))
             {
-                await con.OpenAsync();
-                await command.ExecuteNonQueryAsync();
+                con.Open();
+                using (var transaction = con.BeginTransaction())
+                {
+                    try
+                    {
+                        using (var command = new SqlCommand(procedure, con, transaction))
+                        {
+                            command.CommandType = CommandType.StoredProcedure;
+                            if (connParams != null) command.FillParams(connParams);
+                            command.ExecuteNonQuery();
+                            transaction.Commit();
+                        }
+                    }
+                    catch (Exception)
+                    {
+                        transaction.Rollback();
+                        throw;
+                    }
+                }
             }
+
+            _loader.Stop();
         }
     }
 }

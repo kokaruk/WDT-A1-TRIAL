@@ -8,8 +8,7 @@ namespace Wdt.Controller
         {
             MenuHeader = $"Welcome to Marvelous magic ({((LoginController) Parent).LoggedOnUser.UserType})";
             Children.Add(new OwnerAllStockRequests(this));
-            Children.Add(new OwnerInventory(this));
-            Children.Add(new OwnerResetInventoryItem(this));
+            Children.Add(new OwnerManageInventory(this));
         }
     }
 }
