@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
+using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using Wdt.DAL;
 using Wdt.Model;
@@ -20,77 +21,71 @@ namespace Wdt.Controller
 
         protected override void GetInput()
         {
-            var maxInput = BuildMenu(out var menu);
-            var option = GetInput(menu.ToString(), maxInput,
-                "Enter product number to process or function: ",
-                allowTextInput: true);
-
-            // process next page
-            if (option == -2)
+            while (true)
             {
-                if (_paginationRequired)
-                {
-                    DalFactory.Owner.OwnerInventories = new List<OwnerInventory>();
-                    DalFactory.Owner.CurrentInvPage++;
-                }
-                // typed next page request when next page is not available
-                else
-                {
-                    Console.Clear();
-                    Console.WriteLine("Invalid Input");
-                    Console.WriteLine();
-                }
+                var maxInput = BuildMenu(out var menu);
+                var option = GetInput(menu.ToString(), maxInput, "Enter product number to reset stock or function: ",
+                    allowTextInput: true);
 
-                GetInput();
-            }
 
-            // go back to previous
-            if (option == -3 || option == -1)
-            {
-                // reset Inv  
+                switch (option)
                 {
-                    DalFactory.Owner.OwnerInventories = new List<OwnerInventory>();
-                    DalFactory.Owner.CurrentInvPage = 1;
-                }
+                    // next page in pagination
+                    case -2:
+                        if (_paginationRequired)
+                        {
+                            DalFactory.Owner.OwnerInventories = new List<OwnerInventory>();
+                            DalFactory.Owner.CurrentInvPage++;
+                        }
+                        // typed next page request when next page is not available
+                        else
+                        {
+                            Message = "Invalid Input";
+                        }
 
-                Parent.Start();
-            }
-            else
-            {
-                var updateThreshold = Program.InvResetThreshold;
-                if (DalFactory.Owner.OwnerInventories[option - 1].StockLevel >= updateThreshold)
-                {
-                    Console.Clear();
-                    Console.WriteLine($"{DalFactory.Owner.OwnerInventories[option - 1].Name} has enough stock");
-                    Console.WriteLine();
-                }
-                else
-                {
-                    try
-                    {
-                        var productId = DalFactory.Owner.OwnerInventories[option - 1].ProductId;
-                        DalFactory.Owner.ResetStockLevel(productId, updateThreshold);
+                        continue;
+                    // go back to previous    
+                    case -3: // option r
+                    case -1: // option 'empty input'
+                        // reset Stock requests 
                         DalFactory.Owner.OwnerInventories = new List<OwnerInventory>();
-                        Console.Clear();
-                        Console.WriteLine(
-                            $"{DalFactory.Owner.OwnerInventories[option - 1].Name} has been reset to {updateThreshold}");
-                        Console.WriteLine();
-                    }
-                    catch (SqlException e)
-                    {
-                        Console.WriteLine(e.Message);
-                    }
+                        DalFactory.Owner.CurrentInvPage = 1;
+                        Parent.Start();
+                        break;
+                    default:
+                        // read threshold from app settings
+                        var updateThreshold = Program.InvResetThreshold;
+                        if (DalFactory.Owner.OwnerInventories[option - 1].StockLevel >= updateThreshold)
+                        {
+                            Message = $"\"{DalFactory.Owner.OwnerInventories[option - 1].Name}\" has enough stock";
+                        }
+                        else
+                        {
+                            try
+                            {
+                                var productId = DalFactory.Owner.OwnerInventories[option - 1].ProductId;
+                                DalFactory.Owner.ResetStockLevel(productId, updateThreshold);
+                                DalFactory.Owner.OwnerInventories = new List<OwnerInventory>();
+                                Message = $"\"{DalFactory.Owner.OwnerInventories[option - 1].Name}\" has been reset to {updateThreshold}";
+                            }
+                            catch (SqlException e)
+                            {
+                                Message = e.Message;
+                            }
+                        }
+
+                        break;
                 }
-                // ReSharper disable once TailRecursiveCall
-                GetInput();
             }
         }
 
         private new int BuildMenu(out StringBuilder menu)
         {
+            Console.Clear();
             menu = new StringBuilder(MenuHeader);
             menu.Append($"{Environment.NewLine}{MenuHeader.MenuHeaderPad()}");
             menu.Append(Environment.NewLine);
+
             const string format = "{0}{1, -4}{2, -25}{3}";
             menu.Append(string.Format(format, Environment.NewLine, "#", "Product", "Current Stock"));
             var inventories = DalFactory.Owner.OwnerInventories;
@@ -103,12 +98,18 @@ namespace Wdt.Controller
                     ownerInventory.StockLevel
                 ));
             }
+            
+            
+            var totalPages =
+                (int) Math.Ceiling(DalFactory.Owner.TotalInvItems / (decimal) DalFactory.Owner.Fetch);
+            menu.Append(
+                $"{Environment.NewLine}{Environment.NewLine}Page {DalFactory.Owner.CurrentInvPage} of {totalPages}{Environment.NewLine}");
 
             _paginationRequired = DalFactory.Owner.TotalInvItems -
                                   DalFactory.Owner.Fetch * DalFactory.Owner.CurrentInvPage > 0;
-
-            var legend = _paginationRequired ? "[Legend 'N' Next Page | 'R' Return to Menu]" : "'R' Return to menu";
-            menu.Append($"{Environment.NewLine}{Environment.NewLine}{legend}{Environment.NewLine}");
+            var nextPage = _paginationRequired ? "'N' Next Page | " : string.Empty;
+            var legend = $"[Legend {nextPage}'R' Return to Menu]";
+            menu.Append($"{Environment.NewLine}{legend}{Environment.NewLine}{Message}");
             return inventories.Count;
         }
     }

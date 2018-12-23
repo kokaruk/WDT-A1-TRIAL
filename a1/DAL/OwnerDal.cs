@@ -17,7 +17,7 @@ namespace Wdt.DAL
         /// <summary>
         /// ints for paginated output 
         /// </summary>
-        public int Fetch { get; } = 6;
+        public int Fetch { get; } = Program.FetchLines;
 
         public int CurrentRequestsPage { get; set; } = 1;
         public int CurrentInvPage { get; set; } = 1;

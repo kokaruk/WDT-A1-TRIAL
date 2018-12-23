@@ -52,7 +52,7 @@ namespace Wdt.Controller
             // if this is a test mode (set as string argument)
             if (Program.Testing) return DalFactory.User.GetUser("fake user name", "fake password");
             if (--_logAttempts < 0) throw new TooManyLoginsException("Exhausted max login attempts");
-
+            
             Console.Write("Username: ");
             var userName = Console.ReadLine();
             Console.Write("Password: ");

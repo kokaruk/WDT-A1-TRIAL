@@ -46,7 +46,18 @@ namespace Wdt.DAL
             using (var con = Program.ConnectionString.CreateConnection())
             using (var command = con.CreateProcedureCommand(procedure, connParams))
             {
-                await con.OpenAsync();
+                try
+                {
+                    await con.OpenAsync();
+                }
+                catch (SqlException)
+                {
+                    _loader.Stop();
+                    Console.Clear();
+                    Console.WriteLine("Error establishing connection with remote DB server. System wil now exit.");
+                    Environment.Exit(6);
+                }
+
                 var data = await command.ExecuteScalarAsync();
                 // stop loader before continue
                 _loader.Stop();
@@ -84,7 +95,18 @@ namespace Wdt.DAL
             _loader.Display();
             using (var con = Program.ConnectionString.CreateConnection())
             {
-                con.Open();
+                try
+                {
+                    con.Open();
+                }
+                catch (SqlException)
+                {
+                    _loader.Stop();
+                    Console.Clear();
+                    Console.WriteLine("Error establishing connection with remote DB server. System wil now exit.");
+                    Environment.Exit(6);
+                }
+                
                 using (var transaction = con.BeginTransaction())
                 {
                     try

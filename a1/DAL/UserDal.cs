@@ -43,6 +43,17 @@ namespace Wdt.DAL
             };
             var userType = _dbProxy.ExecuteScalarAsync("get user type", connParams).Result;
             var user = UserFactory.MakeUser(userName, userType);
+            if (user.GetType() == typeof(Franchisee))
+            {
+                connParams = new Dictionary<string, dynamic>
+                {
+                    {"username", userName}
+                };
+
+                int locationId = _dbProxy.ExecuteScalarAsync("get location", connParams).Result;
+                
+                ((Franchisee) user).Location =  (Franchises) (--locationId);
+            }
             return user;
         }
 

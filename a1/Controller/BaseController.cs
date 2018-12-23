@@ -9,7 +9,21 @@ namespace Wdt.Controller
     internal abstract class BaseController
     {
         /// <summary>
-        /// build primary controller factory based on logged on user with reflection instance call
+        /// message field. required for output of error messages
+        /// </summary>
+        private string _message = string.Empty;
+        protected string Message { 
+            get
+            {
+                var tmp = _message;
+                _message = string.Empty;
+                return tmp;
+            } 
+            set => _message = $"{Environment.NewLine}{value}{Environment.NewLine}"; 
+        }
+
+        /// <summary>
+        /// primary controller factory based on logged on user via reflection 
         /// </summary>
         /// <param name="loginController">contains instances of logged on user and namespace string</param>
         /// <returns>instance of Primary Controller or login controller if error is thrown</returns>
@@ -42,9 +56,11 @@ namespace Wdt.Controller
         internal static int GetInput(string menu, int maxInput, string prompt = "Enter an option: ",
             bool allowTextInput = false)
         {
+            Console.WriteLine(menu);
+            
             while (true)
             {
-                Console.WriteLine(menu);
+                
                 Console.Write(prompt);
                 var input = Console.ReadLine();
                 // if allowing text input, return negative values 
@@ -66,7 +82,6 @@ namespace Wdt.Controller
                 // return negative one, requesting function to handle as go up one level
                 if (string.Empty.Equals(input)) return -1;
                 if (int.TryParse(input, out var option) && option.IsWithinMaxValue(maxInput)) return option;
-                Console.Clear();
                 Console.WriteLine("Invalid Input");
                 Console.WriteLine();
             }

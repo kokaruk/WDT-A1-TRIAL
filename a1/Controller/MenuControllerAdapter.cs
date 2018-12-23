@@ -35,7 +35,17 @@ namespace Wdt.Controller
             {
                 if (Parent.GetType() == typeof(LoginController) && !Program.Testing)
                 {
-                    Environment.Exit(0);
+                    if (option == -1)
+                    {
+                        Console.Clear();
+                        // ReSharper disable once TailRecursiveCall
+                        GetInput();
+                    }
+                    else
+                    {
+                        Environment.Exit(0);    
+                    }
+                    
                 }
                 else
                 {
@@ -67,7 +77,7 @@ namespace Wdt.Controller
             }
 
             menu.Append(Parent.GetType() == typeof(LoginController) && !Program.Testing
-                ? $"{Environment.NewLine}{maxValue}. Exit{Environment.NewLine}"
+                ? $"{Environment.NewLine}{maxValue}. Quit{Environment.NewLine}"
                 : $"{Environment.NewLine}{maxValue}. Return to Main Menu{Environment.NewLine}");
             return maxValue;
         }

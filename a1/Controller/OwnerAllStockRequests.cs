@@ -12,7 +12,6 @@ namespace Wdt.Controller
     internal class OwnerAllStockRequests : MenuControllerAdapter
     {
         private bool _paginationRequired;
-        private string _message = string.Empty;
 
         public OwnerAllStockRequests(BaseController parent) : base(parent)
         {
@@ -21,78 +20,82 @@ namespace Wdt.Controller
 
         protected override void GetInput()
         {
-            var maxInput = BuildMenu(out var menu);
-            if (DalFactory.Owner.StockRequests.Count > 0)
+            while (true)
             {
-                var option = GetInput(menu.ToString(), maxInput,
-                    "Enter request number to process or function: ",
-                    allowTextInput: true);
+                var maxInput = BuildMenu(out var menu);
 
-                // process next page
-                if (option == -2)
+                if (DalFactory.Owner.StockRequests.Count == 0)
                 {
-                    if (_paginationRequired)
+                    var option = GetInput(menu.ToString(), maxInput, allowTextInput: true);
+                    if (option == -1 || option == -3)
                     {
-                        DalFactory.Owner.StockRequests = new List<StockRequest>();
-                        DalFactory.Owner.CurrentRequestsPage++;
+                        Parent.Start();
                     }
-                    // typed next page request when next page is not available
                     else
                     {
-                        _message = $"Invalid Input{Environment.NewLine}";
+                        Message = "Invalid Input";
+                        continue;
                     }
-
-                    GetInput();
-                }
-
-                // go back to previous
-                if (option == -3 || option == -1)
-                {
-                    // reset Stock requests 
-                    {
-                        DalFactory.Owner.StockRequests = new List<StockRequest>();
-                        DalFactory.Owner.CurrentRequestsPage = 1;
-                    }
-                    Parent.Start();
                 }
                 else
                 {
-                    if (DalFactory.Owner.StockRequests[option - 1].StockAvail)
-                    {
-                        try
-                        {
-                            var requestId = DalFactory.Owner.StockRequests[option - 1].Id;
-                            DalFactory.Owner.ActionStockRequest(requestId);
-                            DalFactory.Owner.StockRequests = new List<StockRequest>();
-                            if (DalFactory.Owner.TotalStockRequests % DalFactory.Owner.Fetch == 0 
-                                && DalFactory.Owner.CurrentRequestsPage > 1) DalFactory.Owner.CurrentRequestsPage--;
-                            
-                            _message = $"Request complete{Environment.NewLine}";
-                            
-                        }
-                        catch (SqlException e)
-                        {
-                            Console.Clear();
-                            Console.WriteLine(e.Message);
-                        }
-                    }
-                    else
-                    {
-                        Console.Clear();
-                        _message = $"Insufficient Stock{Environment.NewLine}";
-                        Console.WriteLine();
-                    }
+                    var option = GetInput(menu.ToString(), maxInput, "Enter request number to process or function: ",
+                        allowTextInput: true);
 
-                    // ReSharper disable once TailRecursiveCall
-                    GetInput();
-                }
-            }
-            else
-            {
-                var option = GetInput(menu.ToString(), maxInput);
-                if (option == maxInput || option == -1)
-                {
-                    Parent.Start();
+                    switch (option)
+                    {
+                        // next page in pagination
+                        case -2:
+                            if (_paginationRequired)
+                            {
+                                DalFactory.Owner.StockRequests = new List<StockRequest>();
+                                DalFactory.Owner.CurrentRequestsPage++;
+                            }
+                            // typed next page request when next page is not available
+                            else
+                            {
+                                Message = "Invalid Input";
+                                continue;
+                            }
+
+                            break;
+                        // go back to previous    
+                        case -3: // option r
+                        case -1: // option 'empty input'
+                            // reset Stock requests 
+                            DalFactory.Owner.StockRequests = new List<StockRequest>();
+                            DalFactory.Owner.CurrentRequestsPage = 1;
+                            Parent.Start();
+                            break;
+                        // action a stock request
+                        default:
+                            if (DalFactory.Owner.StockRequests[option - 1].StockAvail)
+                            {
+                                try
+                                {
+                                    var requestId = DalFactory.Owner.StockRequests[option - 1].Id;
+                                    DalFactory.Owner.ActionStockRequest(requestId);
+                                    DalFactory.Owner.StockRequests = new List<StockRequest>();
+                                    if (DalFactory.Owner.TotalStockRequests % DalFactory.Owner.Fetch == 0 &&
+                                        DalFactory.Owner.CurrentRequestsPage > 1)
+                                        DalFactory.Owner.CurrentRequestsPage--;
+
+                                    Message = "Request complete";
+                                }
+                                catch (SqlException e)
+                                {
+                                    Console.Clear();
+                                    Console.WriteLine(e.Message);
+                                }
+                            }
+                            else
+                            {
+                                Console.Clear();
+                                Message = ">>>>Insufficient Stock<<<<<";
+                            }
+
+                            break;
+                    }
                 }
             }
         }
@@ -102,18 +105,21 @@ namespace Wdt.Controller
             menu = new StringBuilder(MenuHeader);
             menu.Append($"{Environment.NewLine}{MenuHeader.MenuHeaderPad()}");
             menu.Append(Environment.NewLine);
-            menu.Append(_message);
-            _message = string.Empty;
-            
-            var requests = DalFactory.Owner.StockRequests;
-            if (requests.Count > 0)
+
+            if (DalFactory.Owner.StockRequests.Count == 0)
+            {
+                menu.Append($"{Environment.NewLine}No stock requests found");
+                menu.Append($"{Environment.NewLine}[Legend 'R' Return to Menu]");
+                menu.Append($"{Environment.NewLine}{Message}");
+            }
+            else
             {
                 const string format = "{0}{1, -4}{2, -25}{3, -25}{4, -10}{5, -15}{6, -5}";
                 menu.Append(string.Format(format,
                     Environment.NewLine, "#", "Store", "Product", "Quantity", "Current Stock", "Stock Availability"));
 
                 var rowNum = 0;
-                foreach (var stockRequest in requests)
+                foreach (var stockRequest in DalFactory.Owner.StockRequests)
                 {
                     menu.Append(string.Format(format, Environment.NewLine,
                         ++rowNum,
@@ -125,19 +131,21 @@ namespace Wdt.Controller
                     ));
                 }
 
+                var totalPages =
+                    (int) Math.Ceiling(DalFactory.Owner.TotalStockRequests / (decimal) DalFactory.Owner.Fetch);
+                menu.Append(
+                    $"{Environment.NewLine}{Environment.NewLine}Page {DalFactory.Owner.CurrentRequestsPage} of {totalPages}{Environment.NewLine}");
+
                 _paginationRequired = DalFactory.Owner.TotalStockRequests -
                                       DalFactory.Owner.Fetch * DalFactory.Owner.CurrentRequestsPage > 0;
 
-                var legend = _paginationRequired ? "[Legend 'N' Next Page | 'R' Return to Menu]" : "'R' Return to menu";
-                menu.Append($"{Environment.NewLine}{Environment.NewLine}{legend}{Environment.NewLine}");
-                return requests.Count;
+                var nextPage = _paginationRequired ? "'N' Next Page | " : string.Empty;
+                var legend = $"[Legend {nextPage}'R' Return to Menu]";
+                menu.Append($"{Environment.NewLine}{legend}{Environment.NewLine}{Message}");
+                return DalFactory.Owner.StockRequests.Count;
             }
-            else
-            {
-                menu.Append($"{Environment.NewLine}No stock requests found");
-                menu.Append($"{Environment.NewLine}1. Return to previous menu{Environment.NewLine}");
-                return 1;
-            }
+
+            return -1;
         }
     }
 }
