@@ -21,7 +21,7 @@ namespace Wdt.DAL
         public static IUserDal User => _user.Value;
         private static readonly Lazy<IOwnerDal> _owner = new Lazy<IOwnerDal>(() => OwnerDal.Instance);
         public static IOwnerDal Owner => _owner.Value;
-        private static readonly Lazy<IFranchDal> _franchisee = new Lazy<IFranchDal>(() => FranchDal.Instance);
-        public static IFranchDal Franchisee => _franchisee.Value;
+        private static readonly Lazy<IFranchDal> _franchise = new Lazy<IFranchDal>(() => FranchDal.Instance);
+        public static IFranchDal Franchise => _franchise.Value;
     }
 }

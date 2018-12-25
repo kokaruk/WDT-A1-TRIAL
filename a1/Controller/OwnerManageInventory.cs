@@ -43,7 +43,7 @@ namespace Wdt.Controller
                             Message = "Invalid Input";
                         }
 
-                        continue;
+                        break;
                     // go back to previous    
                     case -3: // option r
                     case -1: // option 'empty input'

@@ -53,7 +53,7 @@ namespace Wdt.Controller
         /// <param name="prompt">Optional param for input prompt, can be overriden from calling function</param>
         /// <param name="allowTextInput">Optional flag param allowing text input (for next / previous pagination)</param>
         /// <returns></returns>
-        internal static int GetInput(string menu, int maxInput, string prompt = "Enter an option: ",
+        internal static int GetInput(string menu = "", int maxInput = 99, string prompt = "Enter an option: ",
             bool allowTextInput = false)
         {
             Console.WriteLine(menu);

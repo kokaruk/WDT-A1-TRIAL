@@ -13,5 +13,6 @@ namespace Wdt.DAL
         List<StoreStock> NonStoreStocks(string storeName);
         void ResetStoreStocks();
         void CreateStockRequest(string location, int prodId, int qty);
+        void PurchaseProduct(string location, int prodId, int qty);
     }
 }

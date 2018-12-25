@@ -26,8 +26,8 @@ namespace Wdt.DAL
 
         public List<StoreStock> StoreStocks(string storeName)
         {
-            UpdateCountStoreStocks(storeName);
             if (_storeStocks.Any()) return _storeStocks;
+            UpdateCountStoreStocks(storeName);
             _storeStocks = TotalInvItems > 0 ? ((Func<List<StoreStock>>) (() =>
             {
                 var connParams = new Dictionary<string, dynamic>
@@ -49,8 +49,8 @@ namespace Wdt.DAL
         
         public List<StoreStock> NonStoreStocks(string storeName)
         {
-            UpdateCountNonStoreStocks(storeName);
             if (_storeStocks.Any()) return _storeStocks;
+            UpdateCountNonStoreStocks(storeName);
             _storeStocks = TotalInvItems > 0 ? ((Func<List<StoreStock>>) (() =>
             {
                 var connParams = new Dictionary<string, dynamic>
@@ -143,6 +143,16 @@ namespace Wdt.DAL
             };
             _dbProxy.ExecuteNonQuery("create stock request", connParams);
         }
-        
+
+        public void PurchaseProduct(string location, int prodId, int qty)
+        {
+            var connParams = new Dictionary<string, dynamic>
+            {
+                {"storeName", location},
+                {"prodId", prodId},
+                {"qty", qty}
+            };
+            _dbProxy.ExecuteNonQuery("purchase an item in store", connParams);
+        }
     }
 }

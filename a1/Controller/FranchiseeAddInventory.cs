@@ -29,8 +29,8 @@ namespace Wdt.Controller
                     case -2:
                         if (_paginationRequired)
                         {
-                            DalFactory.Franchisee.ResetStoreStocks();
-                            DalFactory.Franchisee.CurrentInvPage++;
+                            DalFactory.Franchise.ResetStoreStocks();
+                            DalFactory.Franchise.CurrentInvPage++;
                         }
                         // typed next page request when next page is not available
                         else
@@ -42,28 +42,28 @@ namespace Wdt.Controller
                     case -3: // option r
                     case -1: // option 'empty input' 
                         // reset inventory requests
-                        DalFactory.Franchisee.ResetStoreStocks();
-                        DalFactory.Franchisee.CurrentInvPage = 1;
+                        DalFactory.Franchise.ResetStoreStocks();
+                        DalFactory.Franchise.CurrentInvPage = 1;
                         Parent.Start();
                         break;
                     default:
-                        var productId = DalFactory.Franchisee.NonStoreStocks(_location)[option - 1].Id;
-                        DalFactory.Franchisee.CreateStockRequest(_location, productId, qty: 1);
-                        DalFactory.Franchisee.ResetStoreStocks();
-                        DalFactory.Franchisee.CurrentInvPage = 1;
+                        var productId = DalFactory.Franchise.NonStoreStocks(_location)[option - 1].Id;
+                        DalFactory.Franchise.CreateStockRequest(_location, productId, qty: 1);
+                        DalFactory.Franchise.ResetStoreStocks();
+                        DalFactory.Franchise.CurrentInvPage = 1;
                         Parent.Start();
                         break;
                 }
             }
         }
         
-        private int BuildMenu(out StringBuilder menu)
+        private new int BuildMenu(out StringBuilder menu)
         {
             menu = new StringBuilder(MenuHeader);
             menu.Append($"{Environment.NewLine}{MenuHeader.MenuHeaderPad()}");
             menu.Append(Environment.NewLine);
 
-            if (DalFactory.Franchisee.NonStoreStocks(_location).Count == 0)
+            if (DalFactory.Franchise.NonStoreStocks(_location).Count == 0)
             {
                 menu.Append($"{Environment.NewLine}{_location}: No inventory found");
                 menu.Append($"{Environment.NewLine}[Legend 'R' Return to Menu]");
@@ -73,7 +73,7 @@ namespace Wdt.Controller
             {
                 const string format = "{0}{1, -4}{2, -25}{3}";
                 menu.Append(string.Format(format, Environment.NewLine, "#", "Product", "Current Stock"));
-                var storeStock = DalFactory.Franchisee.NonStoreStocks(_location);
+                var storeStock = DalFactory.Franchise.NonStoreStocks(_location);
                 var rowNum = 0;
                 foreach (var stock in storeStock)
                 {
@@ -85,12 +85,12 @@ namespace Wdt.Controller
                 }
 
                 var totalPages =
-                    (int) Math.Ceiling(DalFactory.Franchisee.TotalInvItems / (decimal) DalFactory.Franchisee.Fetch);
+                    (int) Math.Ceiling(DalFactory.Franchise.TotalInvItems / (decimal) DalFactory.Franchise.Fetch);
                 menu.Append(
-                    $"{Environment.NewLine}{Environment.NewLine}Page {DalFactory.Franchisee.CurrentInvPage} of {totalPages}{Environment.NewLine}");
+                    $"{Environment.NewLine}{Environment.NewLine}Page {DalFactory.Franchise.CurrentInvPage} of {totalPages}{Environment.NewLine}");
 
-                _paginationRequired = DalFactory.Franchisee.TotalInvItems -
-                                      DalFactory.Franchisee.Fetch * DalFactory.Franchisee.CurrentInvPage > 0;
+                _paginationRequired = DalFactory.Franchise.TotalInvItems -
+                                      DalFactory.Franchise.Fetch * DalFactory.Franchise.CurrentInvPage > 0;
 
                 var nextPage = _paginationRequired ? "'N' Next Page | " : string.Empty;
                 var legend = $"[Legend {nextPage}'R' Return to Menu]";

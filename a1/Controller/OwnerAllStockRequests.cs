@@ -34,7 +34,6 @@ namespace Wdt.Controller
                     else
                     {
                         Message = "Invalid Input";
-                        continue;
                     }
                 }
                 else
@@ -55,7 +54,6 @@ namespace Wdt.Controller
                             else
                             {
                                 Message = "Invalid Input";
-                                continue;
                             }
 
                             break;
